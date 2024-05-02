@@ -47,7 +47,7 @@ parquet_files = [
 ]
 
 loaded_secrets = dotenv_values(".env")
-hf_token = loaded_secrets["API_KEY"]
+hf_token = loaded_secrets["HF_API_KEY"]
 
 combined_df = download_and_combine_parquet_files(parquet_files, hf_token)
 

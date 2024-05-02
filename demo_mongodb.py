@@ -1,7 +1,12 @@
 import os 
+
+#Library for making HTTP requests
 import requests
+#From the io module to handle bytes objects like files in the memory
 from io import BytesIO
 import pandas as pd
+#From the dotenv import dotenv_values
+from dotenv import dotenv_values
 
 def download_and_combine_parquet_files(parquet_file_urls, hf_token):
     """
@@ -34,3 +39,20 @@ def download_and_combine_parquet_files(parquet_file_urls, hf_token):
     else:
         print("No dataframes to concatenate.")
         return None
+    
+# Commented out other parquet files below to reduce the amount of data ingested.
+# One praquet file has an estimated 50,000 datapoint 
+parquet_files = [
+    "https://huggingface.co/api/datasets/AIatMongoDB/tech-news-embeddings/parquet/default/train/0000.parquet",
+]
+
+loaded_secrets = dotenv_values(".env")
+hf_token = loaded_secrets["API_KEY"]
+
+combined_df = download_and_combine_parquet_files(parquet_files, hf_token)
+
+# Remove the _id column from the initial dataset
+combined_df = combined_df.drop(columns=['_id'])
+
+# Convert earch numpy array in the 'embedding' column to a normal python list
+combined_df['embedding'] = combined_df['embedding'].apply(lambda x: x.tolist())
